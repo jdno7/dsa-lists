@@ -4,6 +4,7 @@ class Node {
   constructor(val) {
     this.val = val;
     this.next = null;
+    this.previous = null
   }
 }
 
@@ -29,17 +30,26 @@ class LinkedList {
     }
     else {
       this.tail.next = node;
+      node.previous = this.tail
       this.tail = node
       this.length = this.length +1 
     }
     
   }
 
-  traverse(val) {
+  traverseForward(val) {
     let currentNode = this.head
     while(currentNode) {
       console.log(currentNode.val)
       currentNode = currentNode.next
+    }
+  }
+
+  traverseBack(val) {
+    let currentNode = this.tail
+    while(currentNode) {
+      console.log(currentNode.val)
+      currentNode = currentNode.previous
     }
   }
 
@@ -50,9 +60,6 @@ class LinkedList {
     node.next = this.head
     this.head = node
     this.length = this.length +1
-    if (!this.tail){
-      this.tail = node
-    }
   }
 
   /** pop(): return & remove last item. */
@@ -61,25 +68,14 @@ class LinkedList {
     if (!this.head){
        console.error('Cannot remove from empty list')
      }
-    if(this.length === 1){
-      const removed = this.head
-      this.head = null
-      this.tail = null
-      this.length = 0
-      return removed.val
-    }
-   let currentNode = this.head
-   while(currentNode){
-     if (currentNode.next === this.tail){
-       currentNode.next = null;
-       const removed = this.tail
-       this.tail = currentNode
-       this.length = this.length -1
-       return removed.val
+    const removed = this.tail
+    this.tail.previous.next = null
+    this.tail = this.tail.previous
+    this.length = this.length -1
+    return removed
      }
-     currentNode = currentNode.next
-   }
- }
+
+
 
   /** shift(): return & remove first item. */
 
@@ -90,10 +86,7 @@ class LinkedList {
         const removed = this.head
         this.head = this.head.next
         this.length = this.length -1
-        if(this.length === 0){
-          this.tail = null
-        }
-        return removed.val
+        return removed
     }
 
   /** getAt(idx): get val at idx. */
@@ -103,16 +96,16 @@ class LinkedList {
       throw new Error('Enter a valid index')
     }
     if (idx === 0){
-      return this.head.val
+      return this.head
     }
     if (idx === this.length-1){
-      return this.tail.val
+      return this.tail
     }
     let currentNode = this.head
     let i = 0
     while(i < this.length) {
       if(i === idx){
-        return currentNode.val
+        return currentNode
       }
       i++
       currentNode = currentNode.next
@@ -162,9 +155,6 @@ class LinkedList {
       node.next = this.head
       this.head = node
       this.length = this.length+1
-      if (this.length === 1){
-        this.tail = node
-      }
       return
     }
     let currentNode = this.head
@@ -195,9 +185,6 @@ class LinkedList {
       const removed = this.head
       this.head = this.head.next
       this.length = this.length-1
-        if (this.length === 0){
-          this.tail = null
-        }
       return removed
     }
     let currentNode = this.head
@@ -213,7 +200,6 @@ class LinkedList {
         if (this.length === 1){
           this.tail = this.head
         }
-       
         return removed
       }
       i++
@@ -224,9 +210,6 @@ class LinkedList {
   /** average(): return an average of all values in the list */
 
   average() {
-    if (!this.head){
-      return 0
-    }
     let currentNode = this.head
     let i = 0
     let sum = 0
